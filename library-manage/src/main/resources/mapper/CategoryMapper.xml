@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--引入全类名接口-->
+<mapper namespace="com.zyy.mapper.CategoryMapper">
+
+    <select id="list" resultType="com.zyy.pojo.Category">
+        select * from category order by id desc
+    </select>
+    <insert id="insert">
+        insert into category(name, remark) values(#{name}, #{remark})
+    </insert>
+    <update id="update">
+        update category set name = #{name}, remark = #{remark}, updatetime = #{updatetime} where id = #{id}
+    </update>
+
+
+    <delete id="delete">
+        delete from category where id = #{id}
+    </delete>
+
+
+    <select id="pager" resultType="com.zyy.pojo.Category">
+        select * from category
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%', #{name}, '%')
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="getById" resultType="com.zyy.pojo.Category">
+        select * from category where id = #{id}
+    </select>
+    
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--引入全类名接口-->
+<mapper namespace="com.zyy.mapper.BookMapper">
+
+    <select id="list" resultType="com.zyy.pojo.Book">
+        select * from book order by id desc
+    </select>
+    <insert id="insert">
+        insert into book(name, description, publish_date, author, press, category, book_id,amount)
+        values(#{name}, #{description}, #{publishDate}, #{author}, #{press}, #{category}, #{bookId},#{amount})
+    </insert>
+    <update id="update">
+        update book set name = #{name}, description = #{description}, publish_date = #{publishDate}, author = #{author},
+                        press = #{press}, category = #{category}, book_id = #{bookId},amount=#{amount}, updatetime = #{updatetime} where id = #{id}
+    </update>
+    <update id="updateAmount">
+        update book set amount = amount + 1 where book_id = #{bookId}
+    </update>
+
+
+    <delete id="delete">
+        delete from book where id = #{id}
+    </delete>
+
+
+    <select id="pager" resultType="com.zyy.pojo.Book">
+        select * from book
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%', #{name}, '%')
+            </if>
+            <if test="bookId != null and bookId != ''">
+                book_id like concat('%', #{bookId}, '%')
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="getById" resultType="com.zyy.pojo.Book">
+        select * from book where id = #{id}
+    </select>
+    <select id="getBookId" resultType="com.zyy.pojo.Book">
+        select * from book where book_id = #{bookId}
+    </select>
+
+</mapper>

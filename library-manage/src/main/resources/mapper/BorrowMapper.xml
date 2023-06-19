@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--引入全类名接口-->
+<mapper namespace="com.zyy.mapper.BorrowMapper">
+
+    <select id="list" resultType="com.zyy.pojo.Borrow">
+        select * from borrow order by id desc
+    </select>
+    <insert id="insert">
+        insert into borrow(name, book_id, uid, username, phone,days,returntime)
+        values(#{name}, #{bookId}, #{uid}, #{username}, #{phone},#{days},#{returnTime})
+    </insert>
+    <update id="update">
+        update borrow set name = #{name}, book_id = #{bookId},uid = #{uid},username = #{username}, phone = #{phone},status=#{status},days=#{days},returntime=#{returnTime},updatetime = #{updatetime} where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update borrow set status = #{status} where id = #{id}
+    </update>
+
+
+    <delete id="delete">
+        delete from borrow where id = #{id}
+    </delete>
+
+
+
+    <select id="pager" resultType="com.zyy.pojo.Borrow">
+        select * from borrow
+        <where>
+            <if test="name != null and name != ''">
+                name like concat('%', #{name}, '%')
+            </if>
+            <if test="bookId != null and bookId != ''">
+                 book_id like concat('%', #{bookId}, '%')
+            </if>
+            <if test=" username  != null and  username  != ''">
+                and username like concat('%', #{ username }, '%')
+            </if>
+        </where>
+        order by id desc
+    </select>
+    <select id="getById" resultType="com.zyy.pojo.Borrow">
+        select * from borrow where id = #{id}
+    </select>
+
+
+    <select id="getCountByTimeRange" resultType="com.zyy.mapper.po.BorrowReturCountPO">
+        -- DATE_FORMAT(createtime,'%Y-%m-%d')  把datetime类型的数据格式化成  yyyy-MM-dd
+        select count(id) as count, DATE_FORMAT(createtime,'%Y-%m-%d') as date from
+        <if test="type == 1">
+            borrow
+        </if>
+        <if test="type == 2">
+            returnbook
+        </if>
+        where
+        <choose>
+            <when test="timeRange == 'week'">
+                createtime >=  DATE_SUB(NOW(),INTERVAL 1 WEEK)   --  DATE_SUB  数据库时间计算的函数
+            </when>
+            <when test="timeRange == 'month'">
+                createtime >=  DATE_SUB(NOW(),INTERVAL 1 MONTH)
+            </when>
+            <when test="timeRange == 'month2'">
+                createtime >=  DATE_SUB(NOW(),INTERVAL 2 MONTH)
+            </when>
+            <when test="timeRange == 'month3'">
+                createtime >=  DATE_SUB(NOW(),INTERVAL 3 MONTH)
+            </when>
+            <otherwise>
+                createtime > now()
+            </otherwise>
+        </choose>
+        group by date
+    </select>
+
+</mapper>
